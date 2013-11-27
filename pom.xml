@@ -1,0 +1,140 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>bug</groupId>
+    <artifactId>bug</artifactId>
+    <name>HttpComponents Client Bug</name>
+    <version>4.2.5</version>
+
+    <packaging>jar</packaging>
+
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <httpcore.version>4.2.5</httpcore.version>
+        <httpclient.version>4.2.5</httpclient.version>
+        <commons-logging.version>1.1.1</commons-logging.version>
+        <commons-codec.version>1.6</commons-codec.version>
+        <ehcache.version>2.2.0</ehcache.version>
+        <memcached.version>2.6</memcached.version>
+        <slf4j.version>1.5.11</slf4j.version>
+        <junit.version>4.9</junit.version>
+        <easymock.version>2.5.2</easymock.version>
+        <mockito.version>1.8.5</mockito.version>
+        <api.comparison.version>4.2</api.comparison.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>${httpcore.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-notice-plugin</artifactId>
+                <groupId>org.apache.httpcomponents</groupId>
+                <executions>
+                    <execution>
+                        <id>attach-notice-license</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <projectTitle>Apache HttpComponents</projectTitle>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/bin.xml</descriptor>
+                        <descriptor>src/main/assembly/osgi-bin.xml</descriptor>
+                        <descriptor>src/main/assembly/src.xml</descriptor>
+                    </descriptors>
+                    <tarLongFileMode>gnu</tarLongFileMode>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <inherited>false</inherited>
+                <configuration>
+                    <tasks>
+                        <ant antfile="src/main/assembly/build.xml">
+                            <property name="target" value="${project.build.directory}"/>
+                            <property name="package.name" value="${project.artifactId}-${project.version}-bin"/>
+                        </ant>
+                        <ant antfile="src/main/assembly/build.xml">
+                            <property name="target" value="${project.build.directory}"/>
+                            <property name="package.name" value="${project.artifactId}-${project.version}-osgi-bin"/>
+                        </ant>
+                        <ant antfile="src/main/assembly/build.xml">
+                            <property name="target" value="${project.build.directory}"/>
+                            <property name="package.name" value="${project.artifactId}-${project.version}-src"/>
+                        </ant>
+                    </tasks>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>pre-site</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/site/examples</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/examples</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>clirr-maven-plugin</artifactId>
+                <configuration>
+                    <comparisonVersion>${api.comparison.version}</comparisonVersion>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
